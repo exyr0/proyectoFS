@@ -21,18 +21,6 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_venta;
 
-    @Column(unique=true, length = 50, nullable=false)
-    private String medio_pago;
-
-    @Column(unique=true, length = 50, nullable=false)
-    private Date fecha_venta;
-
-    @Column(unique=true, length = 50, nullable=false)
-    private Integer total_venta;
-
-    @Column(unique=true, length = 50, nullable=false)
-    private String estado_venta;
-
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
