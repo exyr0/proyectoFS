@@ -4,6 +4,11 @@ import com.perfulandia_spa.cl.Perfulandia_SPA.model.Cliente;
 
 import com.perfulandia_spa.cl.Perfulandia_SPA.model.Venta;
 import com.perfulandia_spa.cl.Perfulandia_SPA.service.VentaService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import com.perfulandia_spa.RegistrarVentaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +38,14 @@ public class VentaController {
     private ClienteRepository clienteRepository;
     @Autowired
     private CarritoRepository carritoRepository;
-    @GetMapping()
+
+    @Operation(summary = "Listar todas las ventas", description = "Obtiene una lista con todas las ventas registradas")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de ventas encontrada"),
+        @ApiResponse(responseCode = "204", description = "No existen ventas registradas")
+    })
+
+    @GetMapping("/listar")
     public ResponseEntity<List<Venta>> listar(){
         List<Venta> ventas = ventaService.findAll();
         if(ventas.isEmpty()){
@@ -41,12 +53,23 @@ public class VentaController {
         }
         return ResponseEntity.ok(ventas);
     }
-    @PostMapping
+    @Operation(summary = "Guardar una venta", description = "Crea una nueva venta con la información provista")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Venta creada exitosamente")
+    })
+
+    @PostMapping("/guardar")
     public ResponseEntity<Venta> guardar(@RequestBody Venta venta){
         Venta ventaNueva = ventaService.save(venta);
         return ResponseEntity.status(HttpStatus.CREATED).body(ventaNueva);
     }
-    @PostMapping("/venta")
+    @Operation(summary = "Registrar una venta desde carrito y cliente", description = "Registra una venta basada en un carrito y cliente existentes")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Venta registrada exitosamente"),
+        @ApiResponse(responseCode = "400", description = "Datos inválidos: cliente o carrito no encontrados")
+    })
+
+    @PostMapping("/registrar")
     public ResponseEntity<?> registrarVenta(@RequestBody RegistrarVentaDTO dto) {
         Cliente cliente = clienteRepository.findById(dto.getId_cliente()).orElse(null);
         Carrito carrito = carritoRepository.findById(dto.getId_carrito()).orElse(null);
@@ -69,7 +92,12 @@ public class VentaController {
 
     return ResponseEntity.ok(venta);
 }
-    @GetMapping("/{id}")
+    @Operation(summary = "Buscar venta por ID", description = "Obtiene una venta específica mediante su ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Venta encontrada"),
+        @ApiResponse(responseCode = "404", description = "Venta no encontrada")
+    })
+    @GetMapping("/buscar")
     public ResponseEntity<Venta> buscar(@PathVariable Integer id){
         try{
             Venta venta = ventaService.findById(id);

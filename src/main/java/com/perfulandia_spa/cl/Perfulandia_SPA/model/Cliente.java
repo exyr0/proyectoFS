@@ -33,6 +33,6 @@ public class Cliente {
     @Column(unique=true, length = 50, nullable=false)
     private String nombre;
 
-    @Column(unique=true, length = 30, nullable=false)
+    @Column(unique=true, length = 100, nullable=false)
     private String correo;
 }

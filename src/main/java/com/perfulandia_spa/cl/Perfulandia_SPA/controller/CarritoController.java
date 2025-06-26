@@ -1,5 +1,7 @@
 package com.perfulandia_spa.cl.Perfulandia_SPA.controller;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import com.perfulandia_spa.AgregarItemDTO;
 import com.perfulandia_spa.DtoAgregarCliente;
 import com.perfulandia_spa.cl.Perfulandia_SPA.model.Carrito;
@@ -40,7 +42,13 @@ public class CarritoController {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    @GetMapping()
+    @Operation(summary = "Listar todos los carritos", description = "Obtiene la lista de todos los carritos en el sistema")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de carritos encontrada"),
+        @ApiResponse(responseCode = "204", description = "No se encontraron carritos")
+    })
+
+    @GetMapping("/listar")
     public ResponseEntity<List<Carrito>> listar(){
         List<Carrito> carritos = carritoService.findAll();
         if(carritos.isEmpty()){
@@ -48,13 +56,12 @@ public class CarritoController {
         }
         return ResponseEntity.ok(carritos);
     }
-    @PostMapping()
-    public ResponseEntity<Carrito> guardar(@RequestBody Carrito carrito){
-        Carrito carritoNuevo = carritoService.save(carrito);
-        return ResponseEntity.status(HttpStatus.CREATED).body(carritoNuevo);
-    }
-
-    @GetMapping("/{id}")
+    @Operation(summary = "Buscar carrito por ID", description = "Obtiene un carrito específico por su ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Carrito encontrado"),
+        @ApiResponse(responseCode = "404", description = "Carrito no encontrado")
+    })
+    @GetMapping("/buscar")
     public ResponseEntity<Carrito> buscar(@PathVariable Integer id){
         try{
             Carrito carrito = carritoService.findById(id);
@@ -63,8 +70,13 @@ public class CarritoController {
             return ResponseEntity.notFound().build();
         }
     }
+     @Operation(summary = "Agregar un producto al carrito", description = "Agrega un producto al carrito especificado con la cantidad indicada")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Producto agregado al carrito"),
+        @ApiResponse(responseCode = "404", description = "Carrito o Producto no encontrado")
+    })
 
-    @PostMapping("/{carritoId}/agregar")
+    @PostMapping("/agregar")
     public ResponseEntity<?> agregarItemAlCarrito(
             @PathVariable Long carritoId,
             @RequestBody AgregarItemDTO dto) {
@@ -81,6 +93,11 @@ public class CarritoController {
         carritoRepository.save(carrito);
         return ResponseEntity.ok(carrito);
     }
+    @Operation(summary = "Crear un nuevo carrito", description = "Crea un nuevo carrito para un cliente existente")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Carrito creado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
 
     @PostMapping("/crear")
     public ResponseEntity<?> crearCarrito(@RequestBody DtoAgregarCliente dto) {

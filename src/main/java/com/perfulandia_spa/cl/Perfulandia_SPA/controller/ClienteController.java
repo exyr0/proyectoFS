@@ -2,6 +2,10 @@ package com.perfulandia_spa.cl.Perfulandia_SPA.controller;
 import com.perfulandia_spa.cl.Perfulandia_SPA.model.Cliente;
 import com.perfulandia_spa.cl.Perfulandia_SPA.service.ClienteService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +23,20 @@ import java.util.List;
 
 
 @RestController
+
+
 @RequestMapping("api/v1/clientes")
 public class ClienteController {
     @Autowired
-    private ClienteService clienteService; 
-    @GetMapping()
+    private ClienteService clienteService;
+    
+    @Operation(summary = "Listar todos los clientes", description = "Obtiene una lista con todos los clientes registrados")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de clientes obtenida"),
+        @ApiResponse(responseCode = "204", description = "No hay clientes registrados")
+    })
+
+    @GetMapping("/listar")
     public ResponseEntity<List<Cliente>> listar(){
         List<Cliente> clientes = clienteService.findAll();
         if(clientes.isEmpty()){
@@ -32,13 +45,23 @@ public class ClienteController {
         return ResponseEntity.ok(clientes);
     }
 
-    @PostMapping
+    @Operation(summary = "Crear un nuevo cliente", description = "Crea un cliente nuevo con los datos proporcionados")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente")
+    })
+
+    @PostMapping("/guardar")
     public ResponseEntity<Cliente> guardar(@RequestBody Cliente cliente){
         Cliente clienteNuevo = clienteService.save(cliente);
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteNuevo); 
     }
+    @Operation(summary = "Buscar cliente por ID", description = "Obtiene un cliente específico mediante su ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
+        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
 
-    @GetMapping("/{id}")
+    @GetMapping("/buscar")
     public ResponseEntity<Cliente> buscar(@PathVariable Integer id) {
         try{
             Cliente cliente = clienteService.findById(id);
@@ -47,25 +70,35 @@ public class ClienteController {
             return ResponseEntity.notFound().build();
         }
     }
+    @Operation(summary = "Actualizar cliente", description = "Actualiza un cliente existente por su ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Cliente actualizado exitosamente"),
+        @ApiResponse(responseCode = "204", description = "No se encontró cliente para actualizar")
+    })
 
-    @PutMapping("/{id}")
+    @PutMapping("/actualizar")
     public ResponseEntity<Cliente> actualizar(@PathVariable Integer id, @RequestBody Cliente cliente){
         try{
-            cliente = clienteService.findById(id);
-            cliente.setId_cliente(id);
-            cliente.setCorreo(cliente.getCorreo());
-            cliente.setNombre(cliente.getNombre());
-            clienteService.save(cliente);
-            return ResponseEntity.ok(cliente);
+            Cliente cliente2 = clienteService.findById(id);            
+            cliente2.setId_cliente(id);
+            cliente2.setCorreo(cliente.getCorreo());
+            cliente2.setNombre(cliente.getNombre());
+            clienteService.save(cliente2);
+            return ResponseEntity.ok(cliente2);
         }catch(Exception e){
             return ResponseEntity.noContent().build();
         }
     }
-    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar cliente", description = "Elimina un cliente por su ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Cliente eliminado exitosamente"),
+        @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
+    })
+
+    @DeleteMapping("/eliminar")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
         try{
             clienteService.delete(id);
-            
             return ResponseEntity.noContent().build();
         } catch(Exception e){
             return ResponseEntity.notFound().build();
