@@ -7,12 +7,11 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import com.perfulandia_spa.cl.Perfulandia_SPA.model.Cliente;
 import com.perfulandia_spa.cl.Perfulandia_SPA.model.Pedido;
 import com.perfulandia_spa.cl.Perfulandia_SPA.model.Producto;
 import com.perfulandia_spa.cl.Perfulandia_SPA.model.Venta;
-
+import com.perfulandia_spa.cl.Perfulandia_SPA.service.ClienteService;
 import com.perfulandia_spa.cl.Perfulandia_SPA.repository.ClienteRepository;
 import com.perfulandia_spa.cl.Perfulandia_SPA.repository.PedidoRepository;
 import com.perfulandia_spa.cl.Perfulandia_SPA.repository.ProductoRepository;
@@ -23,8 +22,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-
-
+import java.util.List;
 @Component
 public class DataLoader implements CommandLineRunner {
 
@@ -40,6 +38,9 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private VentaRepository ventaRepository;
 
+    @Autowired
+    private ClienteService clienteService;
+
     public DataLoader(ClienteRepository clienteRepository, ProductoRepository productoRepository, PedidoRepository pedidoRepository, VentaRepository ventaRepository) {
         this.pedidoRepository = pedidoRepository;
         this.clienteRepository = clienteRepository;
@@ -53,7 +54,7 @@ public class DataLoader implements CommandLineRunner {
         Faker faker = new Faker(Locale.of("es","CL"));
         Random random = new Random();
 
-       
+        //Crear Clientes
         for (int i = 0; i < 30; i++) {
             Cliente cliente = new Cliente();
             cliente.setUsuario(faker.internet().username() + i);
@@ -61,10 +62,9 @@ public class DataLoader implements CommandLineRunner {
             cliente.setNombre(faker.name().fullName());
             cliente.setCorreo(faker.internet().emailAddress());
             clienteRepository.save(cliente);
-
         }
 
-        
+        //Crear Productos
         for (int i = 0; i < 50; i++) {
             String baseNombre = faker.commerce().productName();
             String nombreUnico = baseNombre + " #" + i;
@@ -76,8 +76,10 @@ public class DataLoader implements CommandLineRunner {
             productoRepository.save(producto);
         }
 
+        //Creacion de estados de pedido
         String[] estados = {"pendiente", "confirmado", "cancelado"};
 
+        //Creacion de Pedidos
         for (int i = 0; i < 30; i++) {
             Pedido pedido = new Pedido();
 
@@ -91,20 +93,20 @@ public class DataLoader implements CommandLineRunner {
             pedidoRepository.save(pedido);
         }
 
-
+        //Creacion de medios de pago y estado de venta
         String[] mediosPago = {"Efectivo", "Tarjeta de crédito", "Transferencia", "MercadoPago"};
         String[] estadosVenta = {"Pendiente", "Completada", "Cancelada"};
 
+
+        //Creacion de ventas
         for (int i = 0; i < 30; i++) {
             Venta venta = new Venta();
-            
-            venta.setCliente(null);
-            venta.setCarrito(null);
+            List<Cliente> clientes = clienteService.findAll();          
+            venta.setCliente(clientes.get(random.nextInt(clientes.size())));            
             venta.setMedio_pago(mediosPago[random.nextInt(mediosPago.length)]);
             venta.setEstado_venta(estadosVenta[random.nextInt(estadosVenta.length)]);
             venta.setFecha_venta(LocalDateTime.now().minusDays(random.nextInt(365)).truncatedTo(ChronoUnit.SECONDS));
-            venta.setTotal_venta(1000 + (100000 - 1000) * random.nextDouble());
-
+            venta.setTotal_venta(Math.round(1000 + (100000 - 1000) * random.nextDouble()));
             ventaRepository.save(venta);
         }
     }

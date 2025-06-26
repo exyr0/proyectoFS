@@ -33,7 +33,7 @@ class VentaServiceTest {
         venta.setFecha_venta(LocalDateTime.now());
         venta.setMedio_pago("Efectivo");
         venta.setEstado_venta("Completado");
-        venta.setTotal_venta(29990.0);
+        venta.setTotal_venta((long) 29990);
         venta.setCarrito(null); // Ignoramos relaciones
         venta.setCliente(null);
     }

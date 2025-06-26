@@ -77,8 +77,8 @@ public class VentaController {
         if (cliente == null || carrito == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Datos inválidos");
         }
-    double total = carrito.getItems().stream()
-        .mapToDouble(item -> item.getProducto().getPrecio_producto() * item.getCantidad())
+    Long total = carrito.getItems().stream()
+        .mapToLong(item -> item.getProducto().getPrecio_producto() * item.getCantidad())
         .sum();
 
     Venta venta = new Venta();

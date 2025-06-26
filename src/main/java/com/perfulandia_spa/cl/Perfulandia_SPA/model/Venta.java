@@ -29,6 +29,6 @@ public class Venta {
     private String medio_pago;
 
     private LocalDateTime fecha_venta;
-    private Double total_venta;
+    private Long total_venta;
     private String estado_venta;
 }
