@@ -41,7 +41,7 @@ public class PedidoController {
         @ApiResponse(responseCode = "404", description = "Pedido no encontrado")
     })
 
-    @GetMapping("/buscar")
+    @GetMapping("{id}/buscar")
     public ResponseEntity<Pedido> buscar(@PathVariable Long id) {
         try{
             Pedido pedido = pedidoService.findById(id);
@@ -66,7 +66,7 @@ public class PedidoController {
         @ApiResponse(responseCode = "204", description = "No hay contenido para actualizar")
     })
 
-    @PutMapping("/actualizar")
+    @PutMapping("{id}/actualizar")
     public ResponseEntity<Pedido> actualizar(@PathVariable Integer id, @RequestBody Pedido pedido) {
         try{
             Pedido pedido2 = pedidoService.findById(id);            
@@ -85,7 +85,7 @@ public class PedidoController {
         @ApiResponse(responseCode = "404", description = "Pedido no encontrado")
     })
 
-    @DeleteMapping("/eliminar")
+    @DeleteMapping("{id}/eliminar")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         try{
             pedidoService.delete(id);

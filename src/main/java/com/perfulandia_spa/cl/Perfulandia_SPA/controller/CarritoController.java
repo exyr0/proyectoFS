@@ -14,9 +14,11 @@ import com.perfulandia_spa.cl.Perfulandia_SPA.service.CarritoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,7 +63,7 @@ public class CarritoController {
         @ApiResponse(responseCode = "200", description = "Carrito encontrado"),
         @ApiResponse(responseCode = "404", description = "Carrito no encontrado")
     })
-    @GetMapping("/buscar")
+    @GetMapping("/{id}/buscar")
     public ResponseEntity<Carrito> buscar(@PathVariable Integer id){
         try{
             Carrito carrito = carritoService.findById(id);
@@ -70,13 +72,49 @@ public class CarritoController {
             return ResponseEntity.notFound().build();
         }
     }
+    
+    @Operation(summary = "Actualizar carrito", description = "Actualiza un carrito especifico por su ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Carrito encontrado"),
+        @ApiResponse(responseCode = "404", description = "Carrito no encontrado")
+    })
+    @PutMapping("/{id}/actualizar")
+public ResponseEntity<?> actualizarCarrito(@PathVariable Integer id, @RequestBody Carrito carritoActualizado) {
+    try {
+        Carrito carritoExistente = carritoService.findById(id);
+        carritoExistente.setCliente(carritoActualizado.getCliente());
+
+        // Limpiamos y reemplazamos los ítems con los nuevos
+        carritoExistente.getItems().clear();
+        carritoExistente.getItems().addAll(carritoActualizado.getItems());
+
+        carritoService.save(carritoExistente);
+        return ResponseEntity.ok(carritoExistente);
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Carrito no encontrado");
+        }
+    }
+    @Operation(summary = "Eliminar Carrito", description = "Elimina un carrito.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Carrito encontrado"),
+        @ApiResponse(responseCode = "404", description = "Carrito no encontrado")
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarCarrito(@PathVariable Long id) {
+    try {
+        carritoService.deleteById(id);
+        return ResponseEntity.noContent().build();
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Carrito no encontrado");
+    }
+    }
      @Operation(summary = "Agregar un producto al carrito", description = "Agrega un producto al carrito especificado con la cantidad indicada")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Producto agregado al carrito"),
         @ApiResponse(responseCode = "404", description = "Carrito o Producto no encontrado")
     })
 
-    @PostMapping("/agregar")
+    @PostMapping("{carritoId}/agregar")
     public ResponseEntity<?> agregarItemAlCarrito(
             @PathVariable Long carritoId,
             @RequestBody AgregarItemDTO dto) {

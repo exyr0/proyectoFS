@@ -59,7 +59,7 @@ public class ProductoController {
         @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
 
-    @GetMapping("/buscar")
+    @GetMapping("/{id}/buscar")
     public ResponseEntity<Producto> buscar(@PathVariable Integer id){
         try{
             Producto producto = productoService.findById(id);
@@ -75,7 +75,7 @@ public class ProductoController {
         @ApiResponse(responseCode = "204", description = "No se encontró producto para actualizar")
     })
 
-    @PutMapping("/actualizar")
+    @PutMapping("{id}/actualizar")
     public ResponseEntity<Producto> actualizar(@PathVariable Integer id, @RequestBody Producto producto){
         try{
             Producto pro = productoService.findById(id);
@@ -95,7 +95,7 @@ public class ProductoController {
         @ApiResponse(responseCode = "404", description = "Producto no encontrado")
     })
 
-    @DeleteMapping("/eliminar")
+    @DeleteMapping("{id}/eliminar")
     public ResponseEntity<Producto> eliminar(@PathVariable Long id){
         try{
             productoService.delete(id);

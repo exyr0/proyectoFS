@@ -61,7 +61,7 @@ public class ClienteController {
         @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     })
 
-    @GetMapping("/buscar")
+    @GetMapping("{id}/buscar")
     public ResponseEntity<Cliente> buscar(@PathVariable Integer id) {
         try{
             Cliente cliente = clienteService.findById(id);
@@ -76,7 +76,7 @@ public class ClienteController {
         @ApiResponse(responseCode = "204", description = "No se encontró cliente para actualizar")
     })
 
-    @PutMapping("/actualizar")
+    @PutMapping("{id}/actualizar")
     public ResponseEntity<Cliente> actualizar(@PathVariable Integer id, @RequestBody Cliente cliente){
         try{
             Cliente cliente2 = clienteService.findById(id);            
@@ -95,7 +95,7 @@ public class ClienteController {
         @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     })
 
-    @DeleteMapping("/eliminar")
+    @DeleteMapping("{id}/eliminar")
     public ResponseEntity<?> eliminar(@PathVariable Long id){
         try{
             clienteService.delete(id);

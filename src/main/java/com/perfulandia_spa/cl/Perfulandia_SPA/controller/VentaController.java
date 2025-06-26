@@ -97,7 +97,7 @@ public class VentaController {
         @ApiResponse(responseCode = "200", description = "Venta encontrada"),
         @ApiResponse(responseCode = "404", description = "Venta no encontrada")
     })
-    @GetMapping("/buscar")
+    @GetMapping("{id}/buscar")
     public ResponseEntity<Venta> buscar(@PathVariable Integer id){
         try{
             Venta venta = ventaService.findById(id);
