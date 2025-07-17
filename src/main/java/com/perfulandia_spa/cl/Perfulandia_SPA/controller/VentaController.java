@@ -53,16 +53,7 @@ public class VentaController {
         }
         return ResponseEntity.ok(ventas);
     }
-    @Operation(summary = "Guardar una venta", description = "Crea una nueva venta con la información provista")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Venta creada exitosamente")
-    })
 
-    @PostMapping("/guardar")
-    public ResponseEntity<Venta> guardar(@RequestBody Venta venta){
-        Venta ventaNueva = ventaService.save(venta);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ventaNueva);
-    }
     @Operation(summary = "Registrar una venta desde carrito y cliente", description = "Registra una venta basada en un carrito y cliente existentes")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Venta registrada exitosamente"),
