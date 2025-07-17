@@ -1,20 +1,16 @@
 package com.perfulandia_spa.cl.Perfulandia_SPA.assemblers;
-
 import com.perfulandia_spa.cl.Perfulandia_SPA.controller.CarritoControllerV2;
 import com.perfulandia_spa.cl.Perfulandia_SPA.model.Carrito;
-
-import io.micrometer.common.lang.NonNull;
-
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
-
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
-
+import org.springframework.lang.NonNull;
 @Component
 public class CarritoModelAssembler implements RepresentationModelAssembler<Carrito, EntityModel<Carrito>> {
 
     @Override
+    @NonNull
     public EntityModel<Carrito> toModel(Carrito carrito) {
         return EntityModel.of(carrito,
                 // Self link
